@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Cpp Templates</title>
+<meta name="author" content="(Evan Misshula)"/>
+
+<link rel="stylesheet" href="./reveal.js/css/reveal.min.css"/>
+<link rel="stylesheet" href="./reveal.js/css/theme/simple.css" id="theme"/>
+
+<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+<script>
+    if( window.location.search.match( /print-pdf/gi ) ) {
+        var link = document.createElement( 'link' );
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = './reveal.js/css/print/pdf.css';
+        document.getElementsByTagName( 'head' )[0].appendChild( link );
+    }
+</script>
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<meta name="description" content="Org-Reveal Introduction.">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section>
+<h1>Cpp Templates</h1>
+<h2>Evan Misshula</h2>
+<h2><a href="mailto:emisshula@jjay.cuny.edu">emisshula@jjay.cuny.edu</a></h2>
+<h2></h2></section>
+
+<section>
+<section id="sec-" >
+
+<h2>Templates</h2>
+<ol class="org-ol">
+<li>Type-independent patterns that can work with multiple data types.
+<ul class="org-ul">
+<li>Generic programming
+</li>
+<li>Code reusable
+</li>
+</ul>
+</li>
+<li>Function Templates
+<ul class="org-ul">
+<li>These define logic behind the algorithms that work for multiple data types.
+</li>
+</ul>
+</li>
+<li>Class Templates
+<ul class="org-ul">
+<li>These define generic class patterns into which specific data types can be plugged in to produce new classes.
+</li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+<section>
+<section id="sec-" >
+
+<h2>Function and function templates I</h2>
+<ul class="org-ul">
+<li>C++ routines work on specific types. We often need to write
+different routines to perform the same operation on different data
+types.
+</li>
+</ul>
+<div class="org-src-container">
+
+<pre  class="src src-c++">int maximum(int a, int b, int c) { 
+      int max = a; 
+      if (b &gt; max) max = b; 
+      if (c &gt; max) max = c; 
+      return max; 
+}
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="sec-" >
+
+<h2>Function and function templates II</h2>
+<div class="org-src-container">
+
+<pre  class="src src-c++">float maximum(float a, float b, float c) { 
+      float max = a; 
+      if (b &gt; max) max = b; 
+      if (c &gt; max) max = c; 
+      return max; 
+}
+</pre>
+</div>
+</section>
+
+</section>
+<section>
+<section id="sec-" >
+
+<h2>Function and function templates III</h2>
+<div class="org-src-container">
+
+<pre  class="src src-c++">double maximum(double a, double b, double c) { 
+      double max = a; 
+      if (b &gt; max) max = b; 
+      if (c &gt; max) max = c; 
+      return max; 
+}
+</pre>
+</div>
+
+
+<ol class="org-ol">
+<li>The logic is exactly the same, but the data type is different.
+</li>
+
+<li>Function templates allow the logic to be written once and used for
+all data types – generic function.
+</li>
+</ol>
+</section>
+</section>
+<section>
+<section id="sec-" >
+
+<h2>Generics</h2>
+<p>
+Generic function to find a maximum value
+    (see maximum example). 
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-c++">Template &lt;class T&gt;
+T maximum(T a, T b, T c)
+ { 
+      T max = a; 
+      if (b &gt; max) max = b; 
+      if (c &gt; max) max = c; 
+      return max; 
+}
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>Template function itself is incomplete because the compiler will
+need to know the actual type to generate code. So template program
+are often placed in .h or .hpp files to be included in program that
+uses the function.
+</li>
+
+<li>C++ compiler will then generate the real function based on the use
+of the function template.
+</li>
+</ul>
+</section>
+
+</section>
+<section>
+<section id="sec-" >
+
+<h2>Using templates</h2>
+<p>
+After a function template is included (or defined), the function can
+be used by passing parameters of real types.
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-c++">Template &lt;class T&gt;
+T maximum(T a, T b, T c)
+…  
+int i1, i2, i3;
+…
+Int m = maximum(i1, i2, i3);
+</pre>
+</div>
+
+<p>
+maximum(i1, i2, i3) will invoke the template function with T==int. The
+function returns a value of int type.
+</p>
+</section>
+
+</section>
+<section>
+<section id="sec-" >
+
+<h2>Forcing the compiler to work</h2>
+<p>
+Each call to maximum() on a different data type forces the compiler to
+generate a different function using the template. See the maximum
+example.
+</p>
+
+<p>
+One copy of code for many types.
+</p>
+
+<div class="org-src-container">
+
+<pre  class="src src-c++">int i1, i2, i3;
+// invoke int version of maximum
+cout &lt;&lt; "The maximum integer value is: "&lt;&lt; maximum( i1, i2, i3 );        
+// demonstrate maximum with double values
+double d1, d2, d3;
+// invoke double version of maximum
+cout&lt;&lt; "The maximum double value is: " &lt;&lt; maximum( d1, d2, d3 );
+</pre>
+</div>
+</section>
+
+</section>
+<section>
+<section id="sec-" >
+
+<h2>Another example</h2>
+<div class="org-src-container">
+
+<pre  class="src src-c++">template&lt; class T &gt; 
+void printArray( const T *array, const int count ) { 
+   for ( int i = 0; i &lt; count; i++ ) 
+      cout &lt;&lt; array[ i ] &lt;&lt; " "; cout &lt;&lt; endl; 
+}
+</pre>
+</div>
+</section>
+
+</section>
+<section>
+<section id="sec-" >
+
+<h2>How to use the Array Print Template</h2>
+<div class="org-src-container">
+
+<pre  class="src src-c++">// in array.hpp
+template&lt; class T &gt; 
+void printArray( const T *array, const int count );
+
+//in test_array.cpp
+char  cc[100];  //declare the array
+int      ii[100]; 
+double dd[100];
+
+printArray(cc, 100); //use the template for type char
+printArray(ii, 100); //use the template for type int
+printArray(dd, 100); //use the template for type double
+</pre>
+</div>
+</section>
+
+
+</section>
+<section>
+<section id="sec-" >
+
+<h2>Extending usage to user defined types</h2>
+<div class="org-src-container">
+
+<pre  class="src src-c++">// in array.hpp
+template&lt; class T &gt; 
+void printArray( const T *array, const int count );
+
+//in test_array.cpp
+char  cc[100];  //declare the array
+int      ii[100]; 
+double dd[100];
+myClass xx[100];
+
+printArray(cc, 100); //use the template for type char
+printArray(ii, 100); //use the template for type int
+printArray(dd, 100); //use the template for type double
+printArray(xx, 100); //use the template for type myClass
+</pre>
+</div>
+</section>
+
+
+</section>
+<section>
+<section id="sec-" >
+
+<h2>Limitations</h2>
+<ul class="org-ul">
+<li>Can any user defined type be used with a template function?
+</li>
+
+<li>Not always, only the ones that support all operations used in the
+function.
+</li>
+
+<li>E.g. if myclass does not have overloaded &lt;&lt; operator, the printarray
+template function will not work.
+</li>
+</ul>
+</section>
+</section>
+<section>
+<section id="sec-" >
+
+<h2>What about class templates?</h2>
+<ul class="org-ul">
+<li>So far the classes that we define use fix data types.
+<ul class="org-ul">
+<li>Sometime is useful to allow storage in a class for different data types.
+</li>
+</ul>
+</li>
+<li>Think about a list of int type elements
+<ul class="org-ul">
+<li>What if we want to make a simple list of double type?
+</li>
+</ul>
+</li>
+<li>Copy paste the whole file and replace int with double
+<ul class="org-ul">
+<li>Make use of typedef in C++, See simplelist2.
+</li>
+<li>Still need to change one line of code for a new type.
+</li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section>
+<section id="sec-" >
+
+<h2>Properties of class templates</h2>
+<ul class="org-ul">
+<li>Function templates allow writing generic functions that work on many
+types.
+</li>
+
+<li>Same idea applies to defining generic classes that work with many
+types &#x2013; extract the type to be a template to make a generic
+classes.
+</li>
+</ul>
+</section>
+
+
+</section>
+<section>
+<section id="sec-" >
+
+<h2>Template Class example</h2>
+<ul class="org-ul">
+<li>MemoryCell template can be used for any type Object.
+</li>
+
+<li>Assumptions
+<ul class="org-ul">
+<li>Object has a zero parameter constructor
+</li>
+<li>Object has a copy constructor
+</li>
+<li>Copy-assignment operator
+</li>
+</ul>
+</li>
+
+<li>Convention
+<ul class="org-ul">
+<li>Class templates declaration and implementation usually combined in
+a single file.
+</li>
+<li>It is not easy to separate them in independent files due to
+complex c++ syntax.
+</li>
+<li>This is different from the convention of separating class
+interface and implementation in different files.
+</li>
+</ul>
+</li>
+</ul>
+
+<div class="org-src-container">
+
+<pre  class="src src-c++">// memory cell
+template &lt;typename Object&gt;
+class MemoryCell {
+ public:
+  explicit MemoryCell( const Object &amp;, initialValue = Object() ) 
+    storedValue( initialValue ) { }
+  const Object &amp; read() const {
+    return storedValue;
+  }
+  void write( const Object &amp; x ) {
+    storedValue = x;
+  }
+ private:
+  Object storedValue;
+}
+</pre>
+</div>
+</section>
+
+</section>
+<section>
+<section id="sec-" >
+
+<h2>Using a memoryCell class template</h2>
+<p>
+MemoryCell template can be used for any type Object.
+</p>
+
+<ul class="org-ul">
+<li>Assumptions
+<ol class="org-ol">
+<li>Object has a zero parameter constructor
+</li>
+<li>Object has a copy constructor
+</li>
+<li>Copy-assignment operator
+</li>
+</ol>
+</li>
+
+<li>Conventions:
+<ol class="org-ol">
+<li>Class templates declaration and implementation usually combined in a
+single file.
+</li>
+<li>It is not easy to separate them in independent files due to complex
+c++ syntax.
+</li>
+<li>This is different from the convention of separating class interface
+and implementation in different files.
+</li>
+</ol>
+</li>
+</ul>
+</section>
+</section>
+</div>
+</div>
+<p> Created by Evan Misshula. </p>
+
+<script src="./reveal.js/lib/js/head.min.js"></script>
+<script src="./reveal.js/js/reveal.min.js"></script>
+
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: true,
+rollingLinks: true,
+keyboard: true,
+overview: true,
+width: 1200,
+height: 800,
+margin: 0.10,
+minScale: 0.50,
+maxScale: 2.50,
+
+theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+transition: Reveal.getQueryHash().transition || 'cube', // default/cube/page/concave/zoom/linear/fade/none
+transitionSpeed: 'default',
+multiplex: {
+    secret: '', // null if client
+    id: '', // id, obtained from socket.io server
+    url: '' // Location of socket.io server
+},
+
+// Optional libraries used to extend on reveal.js
+dependencies: [
+ { src: './reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+ { src: './reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+ { src: './reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } }
+]
+});
+</script>
+</body>
+</html>

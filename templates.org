@@ -1,0 +1,247 @@
+#+Title: Cpp Templates
+#+Author: Evan Misshula
+#+Email: emisshula@jjay.cuny.edu
+
+#+TAGS:       Write(w) Update(u) Fix(f) Check(c) noexport(n) export(e)
+#+OPTIONS: reveal_center:t reveal_progress:t reveal_history:nil reveal_control:t
+#+OPTIONS: reveal_mathjax:t reveal_rolling_links:t reveal_keyboard:t reveal_overview:t num:nil
+#+OPTIONS: reveal_width:1200 reveal_height:800
+#+OPTIONS: toc:nil
+#+OPTIONS: reveal_mathjax_url:file:///MathJax/MathJax.js
+#+REVEAL_MARGIN: 0.1
+#+REVEAL_MIN_SCALE: 0.5
+#+REVEAL_MAX_SCALE: 2.5
+#+REVEAL_TRANS: cube
+#+REVEAL_THEME: simple
+#+REVEAL_HLEVEL: 1
+#+REVEAL_HEAD_PREAMBLE: <meta name="description" content="Org-Reveal Introduction.">
+#+REVEAL_POSTAMBLE: <p> Created by Evan Misshula. </p>
+#+REVEAL_PLUGINS: (highlight markdown)
+
+** Templates
+1. Type-independent patterns that can work with multiple data types.
+   + Generic programming
+   + Code reusable
+2. Function Templates
+   + These define logic behind the algorithms that work for multiple data types.
+3. Class Templates
+   + These define generic class patterns into which specific data types can be plugged in to produce new classes.
+** Function and function templates I
+- C++ routines work on specific types. We often need to write
+  different routines to perform the same operation on different data
+  types.
+#+BEGIN_SRC c++ :exports code
+int maximum(int a, int b, int c) { 
+      int max = a; 
+      if (b > max) max = b; 
+      if (c > max) max = c; 
+      return max; 
+}
+#+END_SRC
+** Function and function templates II
+#+BEGIN_SRC c++ :exports code
+float maximum(float a, float b, float c) { 
+      float max = a; 
+      if (b > max) max = b; 
+      if (c > max) max = c; 
+      return max; 
+}
+#+END_SRC
+
+** Function and function templates III
+#+BEGIN_SRC c++ :exports code
+double maximum(double a, double b, double c) { 
+      double max = a; 
+      if (b > max) max = b; 
+      if (c > max) max = c; 
+      return max; 
+}
+#+END_SRC
+
+
+1. The logic is exactly the same, but the data type is different.
+
+2. Function templates allow the logic to be written once and used for
+   all data types – generic function.
+** Generics
+Generic function to find a maximum value
+    (see maximum example). 
+
+#+BEGIN_SRC c++ :exports code
+Template <class T>
+T maximum(T a, T b, T c) { 
+      T max = a; 
+      if (b > max) max = b; 
+      if (c > max) max = c; 
+      return max; 
+}
+#+END_SRC
+
+- Template function itself is incomplete because the compiler will
+  need to know the actual type to generate code. So template program
+  are often placed in .h or .hpp files to be included in program that
+  uses the function.
+
+- C++ compiler will then generate the real function based on the use
+  of the function template.
+
+** Using templates
+
+After a function template is included (or defined), the function can
+be used by passing parameters of real types.
+
+#+BEGIN_SRC c++ :exports code
+Template <class T>
+T maximum(T a, T b, T c)
+…  
+int i1, i2, i3;
+…
+Int m = maximum(i1, i2, i3);
+#+END_SRC
+
+maximum(i1, i2, i3) will invoke the template function with T==int. The
+function returns a value of int type.
+
+** Forcing the compiler to work
+
+Each call to maximum() on a different data type forces the compiler to
+generate a different function using the template. See the maximum
+example.
+
+One copy of code for many types.
+
+#+BEGIN_SRC c++ :exports code
+  int i1, i2, i3;
+  // invoke int version of maximum
+  cout << "The maximum integer value is: "<< maximum( i1, i2, i3 );        
+  // demonstrate maximum with double values
+  double d1, d2, d3;
+  // invoke double version of maximum
+  cout<< "The maximum double value is: " << maximum( d1, d2, d3 );
+#+END_SRC
+
+** Another example
+
+#+BEGIN_SRC c++ :exports code
+template< class T > 
+void printArray( const T *array, const int count ) { 
+   for ( int i = 0; i < count; i++ ) 
+      cout << array[ i ] << " "; cout << endl; 
+} 
+#+END_SRC
+
+** How to use the Array Print Template
+#+BEGIN_SRC c++ :exports code
+  // in array.hpp
+  template< class T > 
+  void printArray( const T *array, const int count );
+
+  //in test_array.cpp
+  char  cc[100];  //declare the array
+  int      ii[100]; 
+  double dd[100];
+
+  printArray(cc, 100); //use the template for type char
+  printArray(ii, 100); //use the template for type int
+  printArray(dd, 100); //use the template for type double
+
+#+END_SRC
+
+
+** Extending usage to user defined types
+#+BEGIN_SRC c++ :exports code
+  // in array.hpp
+  template< class T > 
+  void printArray( const T *array, const int count );
+
+  //in test_array.cpp
+  char  cc[100];  //declare the array
+  int      ii[100]; 
+  double dd[100];
+  myClass xx[100];
+
+  printArray(cc, 100); //use the template for type char
+  printArray(ii, 100); //use the template for type int
+  printArray(dd, 100); //use the template for type double
+  printArray(xx, 100); //use the template for type myClass
+
+#+END_SRC
+
+
+** Limitations
+
++ Can any user defined type be used with a template function?
+
++ Not always, only the ones that support all operations used in the
+  function.
+
++ E.g. if myclass does not have overloaded << operator, the printarray
+  template function will not work.
+** What about class templates?
+
+- So far the classes that we define use fix data types.
+  - Sometime is useful to allow storage in a class for different data types.
+- Think about a list of int type elements
+  - What if we want to make a simple list of double type?
+- Copy paste the whole file and replace int with double
+  - Make use of typedef in C++, See simplelist2.
+  - Still need to change one line of code for a new type.
+** Properties of class templates
+- Function templates allow writing generic functions that work on many
+  types.
+
+- Same idea applies to defining generic classes that work with many
+  types -- extract the type to be a template to make a generic
+  classes.
+
+
+** Template Class example
+- MemoryCell template can be used for any type Object.
+
+- Assumptions
+  * Object has a zero parameter constructor
+  * Object has a copy constructor
+  * Copy-assignment operator
+
+- Convention
+  - Class templates declaration and implementation usually combined in
+    a single file.
+  - It is not easy to separate them in independent files due to
+    complex c++ syntax.
+  - This is different from the convention of separating class
+    interface and implementation in different files.
+
+#+BEGIN_SRC c++ :exports code
+  // memory cell
+  template <typename Object>
+  class MemoryCell {
+   public:
+    explicit MemoryCell( const Object &, initialValue = Object() ) 
+      storedValue( initialValue ) { }
+    const Object & read() const {
+      return storedValue;
+    }
+    void write( const Object & x ) {
+      storedValue = x;
+    }
+   private:
+    Object storedValue;
+  }
+#+END_SRC
+
+** Using a memoryCell class template
+
+MemoryCell template can be used for any type Object.
+
++ Assumptions
+  1. Object has a zero parameter constructor
+  2. Object has a copy constructor
+  3. Copy-assignment operator
+
++ Conventions:
+  1. Class templates declaration and implementation usually combined in a
+     single file.
+  2. It is not easy to separate them in independent files due to complex
+     c++ syntax.
+  3. This is different from the convention of separating class interface
+     and implementation in different files.
